@@ -74,6 +74,7 @@ class Worker extends AbstractWorker
      */
     protected function loop(): void
     {
-        $this->scheduler->schedule();
+        $this->scheduler->schedule(); // Will run till it has no more
+        $this->sleep();
     }
 }
