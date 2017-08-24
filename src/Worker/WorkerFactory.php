@@ -5,8 +5,8 @@
 
 namespace QueueJitsu\Scheduler\Worker;
 
-use Monolog\Logger;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use QueueJitsu\Scheduler\Scheduler;
 use QueueJitsu\Worker\WorkerManager;
@@ -29,7 +29,7 @@ class WorkerFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        $logger_class = $container->has(Logger::class) ? Logger::class : NullLogger::class;
+        $logger_class = $container->has(LoggerInterface::class) ? LoggerInterface::class : NullLogger::class;
 
         /** @var \Psr\Log\LoggerInterface $logger */
         $logger = $container->get($logger_class);
