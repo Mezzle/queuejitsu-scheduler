@@ -6,6 +6,7 @@
 namespace QueueJitsu\Scheduler\Adapter;
 
 use QueueJitsu\Job\Job;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Interface AdapterInterface
@@ -28,4 +29,14 @@ interface AdapterInterface
      * @param \QueueJitsu\Job\Job $job
      */
     public function enqueueAt(int $at, Job $job): void;
+
+    /**
+     * enqueueCron
+     *
+     * @param string $cron
+     * @param \QueueJitsu\Job\Job $job
+     *
+     * @throws \RuntimeException
+     */
+    public function enqueueCron(string $cron, Job $job);
 }
