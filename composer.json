@@ -20,7 +20,7 @@
     },
     "require": {
         "php": "^7.1",
-        "mez/queuejitsu": "dev-setup-scheduler"
+        "mez/queuejitsu": "dev-master"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.4",
