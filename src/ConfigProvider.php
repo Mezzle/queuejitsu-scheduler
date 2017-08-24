@@ -50,6 +50,7 @@ class ConfigProvider
     {
         return [
             'factories' => [
+                Scheduler::class => SchedulerFactory::class,
                 Worker\Worker::class => Worker\WorkerFactory::class,
             ],
         ];

@@ -25,10 +25,6 @@
 namespace QueueJitsu\Scheduler\Worker;
 
 use Psr\Log\LoggerInterface;
-use QueueJitsu\Job\Job;
-use QueueJitsu\Job\JobManager;
-use QueueJitsu\Queue\Adapter\AdapterInterface;
-use QueueJitsu\Queue\QueueManager;
 use QueueJitsu\Scheduler\Scheduler;
 use QueueJitsu\Worker\AbstractWorker;
 use QueueJitsu\Worker\WorkerManager;
@@ -41,11 +37,6 @@ use QueueJitsu\Worker\WorkerManager;
 class Worker extends AbstractWorker
 {
     /**
-     * @var \QueueJitsu\Queue\QueueManager $queue_manager
-     */
-    private $queue_manager;
-
-    /**
      * @var \QueueJitsu\Scheduler\Scheduler $scheduler
      */
     private $scheduler;
@@ -56,18 +47,15 @@ class Worker extends AbstractWorker
      * @param \Psr\Log\LoggerInterface $log
      * @param \QueueJitsu\Worker\WorkerManager $manager
      * @param \QueueJitsu\Scheduler\Scheduler $scheduler
-     * @param \QueueJitsu\Job\JobManager $job_manager
      */
     public function __construct(
         LoggerInterface $log,
         WorkerManager $manager,
-        Scheduler $scheduler,
-        QueueManager $queue_manager
+        Scheduler $scheduler
     ) {
         parent::__construct($log, $manager);
 
         $this->scheduler = $scheduler;
-        $this->queue_manager = $queue_manager;
     }
 
     /**
@@ -86,10 +74,6 @@ class Worker extends AbstractWorker
      */
     protected function loop(): void
     {
-        while ($job = $this->scheduler->getNextJob()) {
-            $job_obj = new Job($job['class'], $job['queue'], $job['args'], $job['id']);
-
-            $this->queue_manager->enqueue($job_obj);
-        }
+        $this->scheduler->schedule();
     }
 }

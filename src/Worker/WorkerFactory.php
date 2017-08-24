@@ -8,7 +8,6 @@ namespace QueueJitsu\Scheduler\Worker;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\NullLogger;
-use QueueJitsu\Queue\QueueManager;
 use QueueJitsu\Scheduler\Scheduler;
 use QueueJitsu\Worker\WorkerManager;
 
@@ -41,10 +40,6 @@ class WorkerFactory
         /** @var WorkerManager $worker_manager */
         $worker_manager = $container->get(WorkerManager::class);
 
-        $queue_manager_factory = $container->get(QueueManager::class);
-        /** @var QueueManager $queue_manager */
-        $queue_manager = $queue_manager_factory(['*']);
-
-        return new Worker($logger, $worker_manager, $scheduler, $queue_manager);
+        return new Worker($logger, $worker_manager, $scheduler);
     }
 }

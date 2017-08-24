@@ -24,13 +24,91 @@
 
 namespace QueueJitsu\Scheduler;
 
-class Scheduler
+use QueueJitsu\Job\Job;
+use QueueJitsu\Job\JobManager;
+use QueueJitsu\Scheduler\Adapter\AdapterInterface;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
+
+/**
+ * Class Scheduler
+ *
+ * @package QueueJitsu\Scheduler
+ */
+class Scheduler implements EventManagerAwareInterface
 {
+    use EventManagerAwareTrait;
+
+    const STATUS_SCHEDULED = 63;
+
+    /**
+     * @var \QueueJitsu\Scheduler\Adapter\AdapterInterface $adapter
+     */
+    private $adapter;
+
+    /**
+     * @var \QueueJitsu\Job\JobManager $job_manager
+     */
+    private $job_manager;
+
+    /**
+     * Scheduler constructor.
+     *
+     * @param \QueueJitsu\Scheduler\Adapter\AdapterInterface $adapter
+     * @param \QueueJitsu\Job\JobManager $job_manager
+     */
+    public function __construct(AdapterInterface $adapter, JobManager $job_manager)
+    {
+        $this->adapter = $adapter;
+        $this->job_manager = $job_manager;
+    }
+
+    /**
+     * enqueueIn
+     *
+     * @param int $seconds
+     * @param \QueueJitsu\Job\Job $job
+     */
+    public function enqueueIn(int $seconds, Job $job)
+    {
+        $at = time() + $seconds;
+
+        $this->enqueueAt($at, $job);
+    }
+
+    /**
+     * enqueueAt
+     *
+     * @param int $at
+     * @param \QueueJitsu\Job\Job $job
+     */
+    public function enqueueAt(int $at, Job $job)
+    {
+        $this->adapter->enqueueAt($at, $job);
+
+        $this->getEventManager()->trigger('afterSchedule', $job, ['at' => $at]);
+    }
+
+    /**
+     * schedule
+     *
+     */
+    public function schedule(): void
+    {
+        while ($job = $this->getNextJob()) {
+            if (!is_null($job)) {
+                $this->job_manager->enqueue($job);
+                $this->job_manager->updateStatus($job, self::STATUS_SCHEDULED);
+            }
+        }
+    }
+
     /**
      * getNextJob
      *
      */
-    public function getNextJob()
+    private function getNextJob(): ?Job
     {
+        return $this->adapter->getNextJob();
     }
 }
