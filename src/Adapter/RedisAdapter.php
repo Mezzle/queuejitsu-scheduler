@@ -64,7 +64,7 @@ class RedisAdapter implements AdapterInterface
      */
     public function enqueueCron(string $cron, Job $job)
     {
-        $data = ['cron' => $cron, 'job' => $job];
+        $data = ['cron' => $cron, 'job' => $job->getPayload()];
 
         $id = Uuid::uuid4()->toString();
 
@@ -258,12 +258,9 @@ class RedisAdapter implements AdapterInterface
 
         $key = sprintf('%s:%s', self::CRON_QUEUE_NAME, $cron_id);
 
-        $data = json_decode($this->client->get($key));
+        $data = json_decode($this->client->get($key), true);
 
-        $cron = CronExpression::factory($data['cron']);
-        $next_run = $cron->getNextRunDate()->getTimestamp();
-
-        $this->updateCron($cron_id, $next_run);
+        $this->updateCron($cron_id, $data['cron']);
 
         $job = $data['job'];
 
@@ -285,6 +282,6 @@ class RedisAdapter implements AdapterInterface
         $cron = CronExpression::factory($cron);
         $next_run = $cron->getNextRunDate()->getTimestamp();
 
-        $this->client->zadd(self::CRON_QUEUE_NAME, [$next_run => $id]);
+        $this->client->zadd(self::CRON_QUEUE_NAME, [$id => $next_run]);
     }
 }
