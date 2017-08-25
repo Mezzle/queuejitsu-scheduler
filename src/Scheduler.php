@@ -90,6 +90,19 @@ class Scheduler implements EventManagerAwareInterface
     }
 
     /**
+     * enqueueCron
+     *
+     * @param string $cron
+     * @param \QueueJitsu\Job\Job $job
+     *
+     * @throws \RuntimeException
+     */
+    public function enqueueCron(string $cron, Job $job)
+    {
+        $this->adapter->enqueueCron($cron, $job);
+    }
+
+    /**
      * schedule
      *
      */
