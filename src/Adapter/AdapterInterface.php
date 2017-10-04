@@ -6,7 +6,6 @@
 namespace QueueJitsu\Scheduler\Adapter;
 
 use QueueJitsu\Job\Job;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Interface AdapterInterface

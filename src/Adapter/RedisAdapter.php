@@ -39,7 +39,7 @@ class RedisAdapter implements AdapterInterface
      * enqueueAt
      *
      * @param int $at
-     * @param \QueueJitsu\Job\Job $job
+     * @param Job $job
      */
     public function enqueueAt(int $at, Job $job): void
     {
@@ -58,11 +58,11 @@ class RedisAdapter implements AdapterInterface
      * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @param string $cron
-     * @param \QueueJitsu\Job\Job $job
+     * @param Job $job
      *
      * @throws \RuntimeException
      */
-    public function enqueueCron(string $cron, Job $job)
+    public function enqueueCron(string $cron, Job $job): void
     {
         $data = ['cron' => $cron, 'job' => $job->getPayload()];
 
@@ -78,7 +78,7 @@ class RedisAdapter implements AdapterInterface
     /**
      * getNextJob
      *
-     * @return null|\QueueJitsu\Job\Job
+     * @return null|Job
      *
      * @throws \RuntimeException
      */
@@ -128,7 +128,7 @@ class RedisAdapter implements AdapterInterface
      *
      * @return bool
      */
-    private function hasCronJobsToProcess()
+    private function hasCronJobsToProcess(): bool
     {
         return !is_null($this->getNextCronId());
     }
@@ -136,7 +136,7 @@ class RedisAdapter implements AdapterInterface
     /**
      * getNextCronId
      *
-     * @return null
+     *
      */
     private function getNextCronId()
     {
@@ -154,11 +154,11 @@ class RedisAdapter implements AdapterInterface
     /**
      * findNextJob
      *
-     * @return null|\QueueJitsu\Job\Job
+     * @return null|Job
      *
      * @throws \RuntimeException
      */
-    protected function findNextJob()
+    protected function findNextJob(): ?Job
     {
         $next_at_timestamp = $this->getNextAtTimestamp();
         $cron_id = $this->getNextCronId();
@@ -179,9 +179,9 @@ class RedisAdapter implements AdapterInterface
     /**
      * getNextAtJob
      *
-     * @return null|\QueueJitsu\Job\Job
+     * @return null|Job
      */
-    protected function getNextAtJob()
+    protected function getNextAtJob(): ?Job
     {
         $next_timestamp = $this->getNextAtTimestamp();
 
@@ -228,7 +228,7 @@ class RedisAdapter implements AdapterInterface
      *
      * @return int|null
      */
-    private function getCronTimestamp(string $cron_id)
+    private function getCronTimestamp(string $cron_id): ?int
     {
         $items = $this->client->zscore(self::CRON_QUEUE_NAME, $cron_id);
 
@@ -244,11 +244,11 @@ class RedisAdapter implements AdapterInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      *
-     * @return null|\QueueJitsu\Job\Job
+     * @return null|Job
      *
      * @throws \RuntimeException
      */
-    private function getNextCronJob()
+    private function getNextCronJob(): ?Job
     {
         $cron_id = $this->getNextCronId();
 
@@ -279,8 +279,8 @@ class RedisAdapter implements AdapterInterface
      */
     private function updateCron(string $id, string $cron)
     {
-        $cron = CronExpression::factory($cron);
-        $next_run = $cron->getNextRunDate()->getTimestamp();
+        $cronExpression = CronExpression::factory($cron);
+        $next_run = $cronExpression->getNextRunDate()->getTimestamp();
 
         $this->client->zadd(self::CRON_QUEUE_NAME, [$id => $next_run]);
     }
