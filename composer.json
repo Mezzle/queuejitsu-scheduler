@@ -31,7 +31,7 @@
         "phpmd/phpmd": "^2.6",
         "phpro/grumphp": "^0.11.6",
         "phpstan/phpstan": "^0.8.3",
-        "povils/phpmnd": "^1.1",
+        "povils/phpmnd": "^1.1 || ^2.0",
         "predis/predis": "^1.1",
         "sebastian/phpcpd": "^3.0",
         "sensiolabs/security-checker": "^4.1",
