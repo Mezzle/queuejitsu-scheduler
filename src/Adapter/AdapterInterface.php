@@ -19,7 +19,7 @@ interface AdapterInterface
     /**
      * getNextJob
      *
-     * @return mixed
+     * @return null|Job
      */
     public function getNextJob(): ?Job;
 

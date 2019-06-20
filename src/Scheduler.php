@@ -110,15 +110,15 @@ class Scheduler implements EventManagerAwareInterface
     public function schedule(): void
     {
         while ($job = $this->getNextJob()) {
-            if (!is_null($job)) {
-                $this->job_manager->enqueue($job);
-                $this->job_manager->updateStatus($job, self::STATUS_SCHEDULED);
-            }
+            $this->job_manager->enqueue($job);
+            $this->job_manager->updateStatus($job, self::STATUS_SCHEDULED);
         }
     }
 
     /**
      * getNextJob
+     *
+     * @return null|Job
      */
     private function getNextJob(): ?Job
     {

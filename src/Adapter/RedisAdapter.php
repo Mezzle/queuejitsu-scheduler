@@ -149,7 +149,11 @@ class RedisAdapter implements AdapterInterface
     {
         $next_timestamp = $this->getNextAtTimestamp();
 
-        return $this->getNextJobAtTimestamp($next_timestamp);
+        if (!is_null($next_timestamp)) {
+            return $this->getNextJobAtTimestamp($next_timestamp);
+        }
+
+        return null;
     }
 
     /**
@@ -191,11 +195,11 @@ class RedisAdapter implements AdapterInterface
     /**
      * getNextJobAtTimestamp
      *
-     * @param $timestamp
+     * @param int $timestamp
      *
      * @return Job
      */
-    private function getNextJobAtTimestamp($timestamp): Job
+    private function getNextJobAtTimestamp(int $timestamp): Job
     {
         $key = sprintf('%s:%s', self::AT_QUEUE_NAME, $timestamp);
 
@@ -209,9 +213,9 @@ class RedisAdapter implements AdapterInterface
     /**
      * cleanupTimestamp
      *
-     * @param $timestamp
+     * @param int $timestamp
      */
-    private function cleanupTimestamp($timestamp): void
+    private function cleanupTimestamp(int $timestamp): void
     {
         $key = sprintf('%s:%s', self::AT_QUEUE_NAME, $timestamp);
 
