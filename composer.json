@@ -20,7 +20,7 @@
     },
     "require": {
         "php": "^7.1",
-        "mez/queuejitsu": "^0.1",
+        "mez/queuejitsu": "^0.1 || ^2.0",
         "mtdowling/cron-expression": "^1.2",
         "roave/security-advisories": "dev-master"
     },
