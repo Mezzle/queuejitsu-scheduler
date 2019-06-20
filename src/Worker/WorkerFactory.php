@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright (c) 2017 Stickee Technology Limited
  */
@@ -23,9 +25,10 @@ class WorkerFactory
      *
      * @param \Psr\Container\ContainerInterface $container
      *
-     * @return \QueueJitsu\Scheduler\Worker\Worker
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     *
+     * @return \QueueJitsu\Scheduler\Worker\Worker
      */
     public function __invoke(ContainerInterface $container)
     {

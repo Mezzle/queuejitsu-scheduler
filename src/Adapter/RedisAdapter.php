@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright (c) 2017 Stickee Technology Limited
  */
@@ -78,9 +80,9 @@ class RedisAdapter implements AdapterInterface
     /**
      * getNextJob
      *
-     * @return null|Job
-     *
      * @throws \RuntimeException
+     *
+     * @return null|Job
      */
     public function getNextJob(): ?Job
     {
@@ -93,16 +95,6 @@ class RedisAdapter implements AdapterInterface
         }
 
         return $this->getNextCronJob();
-    }
-
-    /**
-     * hasAtJobsToProcess
-     *
-     * @return bool
-     */
-    private function hasAtJobsToProcess(): bool
-    {
-        return !is_null($this->getNextAtTimestamp());
     }
 
     /**
@@ -124,39 +116,11 @@ class RedisAdapter implements AdapterInterface
     }
 
     /**
-     * hasCronJobsToProcess
-     *
-     * @return bool
-     */
-    private function hasCronJobsToProcess(): bool
-    {
-        return !is_null($this->getNextCronId());
-    }
-
-    /**
-     * getNextCronId
-     *
-     *
-     */
-    private function getNextCronId()
-    {
-        $at = time();
-
-        $items = $this->client->zrangebyscore(self::CRON_QUEUE_NAME, '-inf', $at, ['limit', 0, 1]);
-
-        if (empty($items)) {
-            return null;
-        }
-
-        return $items[0];
-    }
-
-    /**
      * findNextJob
      *
-     * @return null|Job
-     *
      * @throws \RuntimeException
+     *
+     * @return null|Job
      */
     protected function findNextJob(): ?Job
     {
@@ -186,6 +150,42 @@ class RedisAdapter implements AdapterInterface
         $next_timestamp = $this->getNextAtTimestamp();
 
         return $this->getNextJobAtTimestamp($next_timestamp);
+    }
+
+    /**
+     * hasAtJobsToProcess
+     *
+     * @return bool
+     */
+    private function hasAtJobsToProcess(): bool
+    {
+        return !is_null($this->getNextAtTimestamp());
+    }
+
+    /**
+     * hasCronJobsToProcess
+     *
+     * @return bool
+     */
+    private function hasCronJobsToProcess(): bool
+    {
+        return !is_null($this->getNextCronId());
+    }
+
+    /**
+     * getNextCronId
+     */
+    private function getNextCronId()
+    {
+        $at = time();
+
+        $items = $this->client->zrangebyscore(self::CRON_QUEUE_NAME, '-inf', $at, ['limit', 0, 1]);
+
+        if (empty($items)) {
+            return;
+        }
+
+        return $items[0];
     }
 
     /**
@@ -244,9 +244,9 @@ class RedisAdapter implements AdapterInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      *
-     * @return null|Job
-     *
      * @throws \RuntimeException
+     *
+     * @return null|Job
      */
     private function getNextCronJob(): ?Job
     {

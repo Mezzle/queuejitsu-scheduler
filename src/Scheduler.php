@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Copyright (c) 2017 Martin Meredith
  * Copyright (c) 2017 Stickee Technology Limited
@@ -104,7 +106,6 @@ class Scheduler implements EventManagerAwareInterface
 
     /**
      * schedule
-     *
      */
     public function schedule(): void
     {
@@ -118,7 +119,6 @@ class Scheduler implements EventManagerAwareInterface
 
     /**
      * getNextJob
-     *
      */
     private function getNextJob(): ?Job
     {
