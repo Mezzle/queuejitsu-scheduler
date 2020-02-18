@@ -19,7 +19,7 @@
         }
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "mez/queuejitsu": "^0.1 || ^2.0 || ^3.0.1",
         "mtdowling/cron-expression": "^1.2",
         "roave/security-advisories": "dev-master"
