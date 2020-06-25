@@ -12,13 +12,13 @@
   "require": {
     "php": "^7.2",
     "ext-json": "^1.6",
+    "laminas/laminas-eventmanager": "^3.2",
     "mez/queuejitsu": "^0.1 || ^2.0 || ^3.0.1",
     "mtdowling/cron-expression": "^1.2",
     "predis/predis": "^1.1",
     "psr/container": "^1.0",
     "psr/log": "^1.1",
-    "ramsey/uuid": "^3.7",
-    "zendframework/zend-eventmanager": "^3.2"
+    "ramsey/uuid": "^3.7"
   },
   "require-dev": {
     "ergebnis/composer-normalize": "^2.5",

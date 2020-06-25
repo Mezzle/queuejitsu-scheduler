@@ -26,11 +26,11 @@ declare(strict_types=1);
 
 namespace QueueJitsu\Scheduler;
 
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerAwareTrait;
 use QueueJitsu\Job\Job;
 use QueueJitsu\Job\JobManager;
 use QueueJitsu\Scheduler\Adapter\AdapterInterface;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 
 /**
  * Class Scheduler
