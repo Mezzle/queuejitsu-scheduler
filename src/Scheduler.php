@@ -1,8 +1,6 @@
 <?php
-
-declare(strict_types=1);
-/**
- * Copyright (c) 2017 Martin Meredith
+/*
+ * Copyright (c) 2017 - 2020 Martin Meredith
  * Copyright (c) 2017 Stickee Technology Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +21,8 @@ declare(strict_types=1);
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+declare(strict_types=1);
 
 namespace QueueJitsu\Scheduler;
 
@@ -59,8 +59,10 @@ class Scheduler implements EventManagerAwareInterface
      * @param \QueueJitsu\Scheduler\Adapter\AdapterInterface $adapter
      * @param \QueueJitsu\Job\JobManager $job_manager
      */
-    public function __construct(AdapterInterface $adapter, JobManager $job_manager)
-    {
+    public function __construct(
+        AdapterInterface $adapter,
+        JobManager $job_manager
+    ) {
         $this->adapter = $adapter;
         $this->job_manager = $job_manager;
     }
@@ -71,7 +73,7 @@ class Scheduler implements EventManagerAwareInterface
      * @param int $seconds
      * @param \QueueJitsu\Job\Job $job
      */
-    public function enqueueIn(int $seconds, Job $job)
+    public function enqueueIn(int $seconds, Job $job): void
     {
         $at = time() + $seconds;
 
@@ -84,7 +86,7 @@ class Scheduler implements EventManagerAwareInterface
      * @param int $at
      * @param \QueueJitsu\Job\Job $job
      */
-    public function enqueueAt(int $at, Job $job)
+    public function enqueueAt(int $at, Job $job): void
     {
         $this->adapter->enqueueAt($at, $job);
 
@@ -99,7 +101,7 @@ class Scheduler implements EventManagerAwareInterface
      *
      * @throws \RuntimeException
      */
-    public function enqueueCron(string $cron, Job $job)
+    public function enqueueCron(string $cron, Job $job): void
     {
         $this->adapter->enqueueCron($cron, $job);
     }

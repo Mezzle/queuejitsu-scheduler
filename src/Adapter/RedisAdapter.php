@@ -1,9 +1,28 @@
 <?php
+/*
+ * Copyright (c) 2017 - 2020 Martin Meredith
+ * Copyright (c) 2017 Stickee Technology Limited
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 declare(strict_types=1);
-/**
- * @copyright (c) 2017 Stickee Technology Limited
- */
 
 namespace QueueJitsu\Scheduler\Adapter;
 
@@ -106,7 +125,13 @@ class RedisAdapter implements AdapterInterface
     {
         $at = time();
 
-        $items = $this->client->zrangebyscore(self::AT_QUEUE_NAME, '-inf', $at, ['limit', 0, 1]);
+        $items =
+            $this->client->zrangebyscore(
+                self::AT_QUEUE_NAME,
+                '-inf',
+                $at,
+                ['limit', 0, 1]
+            );
 
         if (empty($items)) {
             return null;
@@ -127,7 +152,7 @@ class RedisAdapter implements AdapterInterface
         $next_at_timestamp = $this->getNextAtTimestamp();
         $cron_id = $this->getNextCronId();
 
-        if (is_null($cron_id)) {
+        if ($cron_id === false) {
             return $this->getNextAtJob();
         }
 
@@ -157,6 +182,24 @@ class RedisAdapter implements AdapterInterface
     }
 
     /**
+     * updateCron
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
+     * @param string $id
+     * @param string $cron
+     *
+     * @throws \RuntimeException
+     */
+    private function updateCron(string $id, string $cron): void
+    {
+        $cronExpression = CronExpression::factory($cron);
+        $next_run = $cronExpression->getNextRunDate()->getTimestamp();
+
+        $this->client->zadd(self::CRON_QUEUE_NAME, [$id => $next_run]);
+    }
+
+    /**
      * hasAtJobsToProcess
      *
      * @return bool
@@ -173,20 +216,28 @@ class RedisAdapter implements AdapterInterface
      */
     private function hasCronJobsToProcess(): bool
     {
-        return !is_null($this->getNextCronId());
+        return $this->getNextCronId() !== false;
     }
 
     /**
      * getNextCronId
+     *
+     * @return string|false
      */
     private function getNextCronId()
     {
         $at = time();
 
-        $items = $this->client->zrangebyscore(self::CRON_QUEUE_NAME, '-inf', $at, ['limit', 0, 1]);
+        $items =
+            $this->client->zrangebyscore(
+                self::CRON_QUEUE_NAME,
+                '-inf',
+                $at,
+                ['limit', 0, 1]
+            );
 
         if (empty($items)) {
-            return;
+            return false;
         }
 
         return $items[0];
@@ -207,7 +258,12 @@ class RedisAdapter implements AdapterInterface
 
         $this->cleanupTimestamp($timestamp);
 
-        return new Job($item['class'], $item['queue'], $item['args'], $item['id']);
+        return new Job(
+            $item['class'],
+            $item['queue'],
+            $item['args'],
+            $item['id']
+        );
     }
 
     /**
@@ -256,7 +312,7 @@ class RedisAdapter implements AdapterInterface
     {
         $cron_id = $this->getNextCronId();
 
-        if (is_null($cron_id)) {
+        if ($cron_id === false) {
             return null;
         }
 
@@ -269,23 +325,5 @@ class RedisAdapter implements AdapterInterface
         $job = $data['job'];
 
         return new Job($job['class'], $job['queue'], $job['args']);
-    }
-
-    /**
-     * updateCron
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     *
-     * @param string $id
-     * @param string $cron
-     *
-     * @throws \RuntimeException
-     */
-    private function updateCron(string $id, string $cron)
-    {
-        $cronExpression = CronExpression::factory($cron);
-        $next_run = $cronExpression->getNextRunDate()->getTimestamp();
-
-        $this->client->zadd(self::CRON_QUEUE_NAME, [$id => $next_run]);
     }
 }
