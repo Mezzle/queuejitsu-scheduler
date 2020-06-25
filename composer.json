@@ -11,7 +11,7 @@
   ],
   "require": {
     "php": "^7.2",
-    "ext-json": "^1.6",
+    "ext-json": "*",
     "laminas/laminas-eventmanager": "^3.2",
     "mez/queuejitsu": "^0.1 || ^2.0 || ^3.0.1",
     "mtdowling/cron-expression": "^1.2",
